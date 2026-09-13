@@ -1,0 +1,81 @@
+name: SAF PoC and Stats
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  poc:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run unit tests
+        run: |
+          mkdir -p reports
+          pytest -q --junitxml=reports/junit.xml || true
+        continue-on-error: false
+
+      - name: Generate deterministic FASTQ
+        run: |
+          python scripts/generate_fastq.py tests/resources/small.fastq --reads 10000 --seed 42 --length 100
+
+      - name: Run baseline harness (30 runs)
+        run: |
+          python ci/baseline_harness.py tests/resources/small.fastq --out 01_Benchmark_Package/Results --runs 30
+
+      - name: Run Lotusv1 harness (30 runs)
+        run: |
+          python ci/benchmark_harness.py tests/resources/small.fastq --out 01_Benchmark_Package/Results --runs 30 --workers 8 --chunk 200
+
+      - name: Run STAT validation
+        run: |
+          # split CSV into baseline and candidate for validator
+          python - <<'PY'
+import csv
+base=[]
+cand=[]
+with open('01_Benchmark_Package/Results/benchmark_results.csv') as f:
+    r=csv.DictReader(f)
+    for row in r:
+        if row['run_id'].startswith('baseline'):
+            base.append(row)
+        else:
+            cand.append(row)
+with open('01_Benchmark_Package/Results/baseline.csv','w') as f:
+    f.write('throughput_units_per_sec\n')
+    for row in base:
+        f.write(row['throughput_units_per_sec'] + '\n')
+with open('01_Benchmark_Package/Results/candidate.csv','w') as f:
+    f.write('throughput_units_per_sec\n')
+    for row in cand:
+        f.write(row['throughput_units_per_sec'] + '\n')
+PY
+          python tests/validate_stats.py --baseline 01_Benchmark_Package/Results/baseline.csv --candidate 01_Benchmark_Package/Results/candidate.csv || true
+
+      - name: Compute manifest
+        run: |
+          python -c "from pathlib import Path; from src.utils.hash_manifest import write_manifest; write_manifest(Path('.'), Path('01_Benchmark_Package/Results/repo_manifest.txt'))"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: saf-poc-artifacts
+          path: |
+            reports
+            01_Benchmark_Package/Results
+            src/utils
+

@@ -1,9 +1,3 @@
-# Project Python requirements (pinned minimal set for CI/testing)
-requests
 pytest
 numpy
 scipy
-psutil
-qiskit==0.40.0
-prometheus_client
-py-cpuinfo
