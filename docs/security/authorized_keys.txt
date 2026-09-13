@@ -1,0 +1,8 @@
+# Authorized public keys for human reviewers (GPG public keys)
+# This file should contain one ASCII-armored public key block per authorized reviewer,
+# or references to key IDs and their retrieval instructions. Do NOT store private keys here.
+
+# Example placeholder entry:
+# /keys/trusted_reviewer_1.pub
+
+# To provision keys for CI verification, store public keys in docs/security/ and update SEC-001 accordingly.
