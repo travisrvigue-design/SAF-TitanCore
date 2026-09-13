@@ -1,0 +1,22 @@
+# Repository Manifest (Master) - Placeholder hashes
+# This repo_manifest.txt was generated and committed by the Copilot Chat Assistant as the authorized master tracking manifest (Grant_Tracker_V1 / VVP-001).
+# NOTE: SHA-256 values are placeholders. Run src/utils/hash_manifest.py locally or in CI to compute and populate the real hashes.
+
+# Artifact list
+01_Benchmark_Package/Results/benchmark_run_base_1.json: SHA256:TBD
+01_Benchmark_Package/Results/benchmark_run_base_2.json: SHA256:TBD
+...
+01_Benchmark_Package/Results/benchmark_run_base_30.json: SHA256:TBD
+01_Benchmark_Package/Results/benchmark_run_lotus_1.json: SHA256:TBD
+...
+01_Benchmark_Package/Results/benchmark_run_lotus_30.json: SHA256:TBD
+01_Benchmark_Package/Results/benchmark_results.csv: SHA256:TBD
+01_Benchmark_Package/Results/baseline.csv: SHA256:TBD
+01_Benchmark_Package/Results/candidate.csv: SHA256:TBD
+01_Benchmark_Package/Results/repo_manifest.txt: SHA256:TBD
+reports/junit.xml: SHA256:TBD
+reports/pytest.log: SHA256:TBD
+
+# Manifest generated-by: travisrvigue-design (authorized)
+# Manifest generation timestamp (UTC): 2026-09-13T18:18:00Z
+# Verification: Replace 'TBD' with actual SHA-256 by running the hash utility and committing the updated file.
