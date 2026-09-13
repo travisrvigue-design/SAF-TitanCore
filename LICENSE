@@ -1,21 +1,53 @@
-MIT License
+PUBLIC CONTROLLED RESEARCH LICENSE (PCRL) — DRAFT
 
-Copyright (c) 2026 travisrvigue-design
+Preamble
+This software, documentation, and associated materials (collectively “Materials”) are published publicly by the Owner (travisrvigue-design) to advance reproducible research, auditing, and legitimate scientific collaboration. Distribution is permitted under the terms below, which are expressly protective of public safety, privacy, and lawful use.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Definitions
+- “Owner”: travisrvigue-design and their assigns.
+- “Recipient”: any individual or entity receiving the Materials under this License.
+- “Authorized Use”: use in accordance with Section 1 (Grant of Rights) and all other Sections below.
+- “Prohibited Use”: any use described in Section 2 (Restrictions).
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+1. Grant of Rights
+Subject to the terms and conditions of this License, Owner grants Recipient a worldwide, non-exclusive, non-transferable, revocable license to:
+  a) Reproduce, study, and run the Materials for non-commercial research, education, or evaluation purposes;
+  b) Create and publicly disclose modifications or derivative works for research/education, provided that such modifications:
+     i. include a clear banner that the work is derivative and cite the Owner;
+     ii. include provenance information (manifest, SHA-256 digests, buildinfo, and signature verification metadata) and preserve original manifest entries.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+2. Restrictions (Prohibited Uses)
+Recipient MUST NOT use, deploy, distribute, transfer, or otherwise operationalize the Materials for:
+  a) any purpose reasonably expected to cause biological harm, facilitate biological weaponization, enable the design, growth, propagation, genetic modification, or dissemination of biological agents, or otherwise enable activities contrary to biosecurity norms;
+  b) surveillance, profiling, targeted population control, or law-enforcement activities without documentary prior written authorization from the Owner and documented institutional review and legal approvals;
+  c) commercial exploitation, resale, or embedding in closed-source proprietary systems without a separate commercial license from the Owner;
+  d) export, re-export, or transfer in violation of applicable export-control, sanctions, or other regulatory regimes.
+
+3. Human-In-The-Loop & Governance Requirements
+Any deployment of Materials that produces clinical, public-health, surveillance, or safety-relevant inferences MUST:
+  a) implement a verifiable Human-in-the-Loop gating mechanism equivalent to SOP-001 (human approval, logged and cryptographically signed);
+  b) preserve and publish audit manifests and signatures for the run(s) used to produce results, subject to privacy and legal constraints;
+  c) ensure that appropriate institutional, ethical, and regulatory approvals are obtained prior to operational deployment.
+
+4. Attribution, Notice, and Provenance
+Recipient shall:
+  a) retain this License and any Owner notices in all copies and substantial portions of the Materials;
+  b) include in any public release of derived results a citation to Owner and a link to this repository (or an unambiguous Owner reference if the repo is taken down), and publish manifest.json and signature verification metadata used to produce the presented results, unless prevented by law or privacy obligations.
+
+5. Contribution and Contributor Obligations
+Contributors must sign an Author Contribution Agreement or sign-off via a Developer Certificate of Origin (DCO) confirming they have the right to contribute and agree to license their contributions under this License. Owner may require additional Contributor License Agreements (CLAs) for some uses.
+
+6. Termination
+This License and rights granted hereunder will terminate immediately upon Recipient’s breach of any material term (including the Restrictions in Section 2) and may be terminated by Owner for any reason with written notice. Upon termination, Recipient must cease use and distribution of the Materials and, where practicable, remove public copies or otherwise make them inaccessible.
+
+7. No Warranty; Limitation of Liability
+The Materials are provided “AS IS”, WITHOUT WARRANTY OF ANY KIND. In no event shall Owner be liable for damages arising out of use or inability to use the Materials. Recipient is solely responsible for compliance with all applicable laws and regulations related to their use of the Materials.
+
+8. Governing Law & Jurisdiction
+This License shall be governed by the laws specified in the NOTICE.md file (Owner jurisdiction). Absent a specified jurisdiction, the Owner’s primary jurisdiction will apply. Disputes shall be resolved as set out in that jurisdiction clause (consult counsel to specify).
+
+9. Enforcement and Remedies
+Owner reserves all rights to seek injunctive relief, damages, and other remedies in the event of breach, including but not limited to reporting misuse to appropriate authorities.
+
+Acceptance
+Use, copy, or distribution of the Materials constitutes acceptance of the terms of this License.

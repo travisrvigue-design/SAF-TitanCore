@@ -1,17 +1,9 @@
+<!-- NOTICE: repository header updated to reflect controlled public release -->
+
 # SAF-TitanCore
 
-Sovereign Adaptive Framework (SAF) — TitanCore monorepo for Lotusv1, Ludus, and Luda
+PUBLIC CONTROLLED RELEASE — Restrictions apply. See LICENSE (Public Controlled Research License — PCRL) and NOTICE.md for details.
 
-This repository contains the architecture, CI, tests, and reproducibility tooling for the Edgeless Hybrid Agent Mesh platforms (Lotusv1, Ludus, Luda).
+This repository contains the Sovereign Adaptive Framework (SAF) architectures for Lotusv1, Ludus, and Luda. The Materials are made publicly available for research, reproducibility, and auditing under the PCRL.
 
-Quick links:
-- ARCHITECTURE.md — high-level system overview
-- lotusv1/ARCHITECTURE.md — Lotusv1 variant
-- ludus/ARCHITECTURE.md — Ludus variant
-- luda/ARCHITECTURE.md — Luda variant
-- SOP-001.md — Human-in-Loop gate
-- DATASET.md — deterministic ingestion & manifest guidance
-- ci/ and .github/workflows — GitHub Actions CI workflows
-- tests/ — unit / integration / statistical / chaos tests
-
-License: MIT
+Contact: travisrvigue-design@users.noreply.github.com
