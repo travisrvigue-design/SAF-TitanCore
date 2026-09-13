@@ -1,9 +1,5 @@
-<!-- NOTICE: repository header updated to reflect controlled public release -->
+# README: Project TitanCore (Lotusv1) - Verification & Validation
 
-# SAF-TitanCore
+This repository contains the Sovereign Adaptive Framework (SAF) core components and verification artifacts.
 
-PUBLIC CONTROLLED RELEASE — Restrictions apply. See LICENSE (Public Controlled Research License — PCRL) and NOTICE.md for details.
-
-This repository contains the Sovereign Adaptive Framework (SAF) architectures for Lotusv1, Ludus, and Luda. The Materials are made publicly available for research, reproducibility, and auditing under the PCRL.
-
-Contact: travisrvigue-design@users.noreply.github.com
+See docs/ for architecture, governance, security, and stats plans. Run `pytest` inside the repository or build the docker image using `docker build --no-cache -t saf-titancore:local .` to perform a clean-room build.
