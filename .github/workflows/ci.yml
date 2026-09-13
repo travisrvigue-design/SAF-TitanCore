@@ -22,6 +22,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest numpy scipy
 
+      - name: Ensure test resources directory
+        run: |
+          mkdir -p tests/resources
+
       - name: Generate synthetic FASTQ
         run: |
           python scripts/generate_fastq.py tests/resources/small.fastq --reads 50 --seed 123
@@ -29,6 +33,10 @@ jobs:
       - name: Run partitioner
         run: |
           python scripts/partitioner.py tests/resources/small.fastq --out tests/resources/units
+
+      - name: List resources for debugging
+        run: |
+          ls -R tests/resources || true
 
       - name: Run tests
         run: pytest -q
