@@ -1,0 +1,6 @@
+CI Re-run trigger: user requested hosted re-run with no PAT
+
+This file updates the CI trigger timestamp to nudge GitHub Actions to run the PoC workflow again.
+
+Timestamp: 2026-09-13T18:45:00Z
+Requested by: travisrvigue-design
