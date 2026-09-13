@@ -1,0 +1,5 @@
+CI Trigger: run full test and optimization pass
+
+This file was updated to trigger the CI workflows to run the full test suite and benchmarks (hosted simulator jobs).
+
+Timestamp: 2026-09-13T17:36:00Z
