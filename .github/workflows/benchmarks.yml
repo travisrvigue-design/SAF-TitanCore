@@ -1,0 +1,27 @@
+name: Benchmarks (manual)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  benchmarks:
+    runs-on: self-hosted
+    if: runner.labels contains 'saf-benchmark'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install benchmark deps
+        run: pip install -r ci/benchmark-requirements.txt
+      - name: Run benchmark harness
+        run: |
+          echo "Running benchmarks on self-hosted runner"
+          # Placeholder for real benchmark command
+          python -m timeit -n 10 -s "from scripts import partitioner" "partitioner.partition_fastq('tests/resources/small.fastq','/tmp/units', chunk_lines=100)"
+      - name: Upload benchmark artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: /tmp/benchmark-results || ./benchmark-results

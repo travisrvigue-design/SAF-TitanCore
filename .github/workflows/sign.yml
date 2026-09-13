@@ -1,0 +1,39 @@
+name: Signing (template)
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  sign-artifacts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install cosign
+        run: |
+          COSIGN_VERSION=2.1.0
+          curl -LO https://github.com/sigstore/cosign/releases/download/v${COSIGN_VERSION}/cosign-linux-amd64
+          sudo install cosign-linux-amd64 /usr/local/bin/cosign
+
+      - name: Build artifact (example)
+        run: |
+          echo "Building sample artifact"
+          mkdir -p out && echo hi > out/sample.txt
+
+      - name: Sign with OIDC (requires repo permissions)
+        env:
+          COSIGN_EXPERIMENTAL: "1"
+        run: |
+          if [ -z "${{ secrets.COSIGN_OIDC_TOKEN }}" ]; then
+            echo "No COSIGN OIDC token configured; skipping sign step"
+          else
+            cosign sign --key ${COSIGN_KEY} out/sample.txt
+          fi
+
+      - name: Upload signed artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: signed-artifact
+          path: out/sample.txt
