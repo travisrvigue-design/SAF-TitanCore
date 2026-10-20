@@ -11,6 +11,9 @@ name: Smoke Test
 # - Run created and passes: the platform is healthy; continue to CI.
 # - Run created but fails: inspect the failing step before touching app code.
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [main]
