@@ -1,0 +1,17 @@
+name: Smoke Test
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hello
+        run: |
+          echo "Smoke test started"
+          uname -a
+          python3 --version
+          echo "Smoke test passed"
