@@ -1,5 +1,16 @@
 name: Smoke Test
 
+# Purpose:
+# This is the first gate for the repository.
+# It verifies GitHub Actions can queue and execute a job on the default branch.
+# If this workflow does not start, the issue is repository or GitHub platform setup,
+# not application code or release logic.
+#
+# Interpretation:
+# - No run created: fix repo/org Actions settings, branch, workflow path, or billing.
+# - Run created and passes: the platform is healthy; continue to CI.
+# - Run created but fails: inspect the failing step before touching app code.
+
 on:
   push:
     branches: [main]
@@ -9,7 +20,7 @@ jobs:
   smoke:
     runs-on: ubuntu-latest
     steps:
-      - name: Hello
+      - name: Confirm runner startup
         run: |
           echo "Smoke test started"
           uname -a
