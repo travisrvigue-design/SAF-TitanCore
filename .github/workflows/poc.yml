@@ -37,10 +37,10 @@ jobs:
           pip install -r requirements.txt
           mkdir -p reports tests/resources 01_Benchmark_Package/Results
 
-      - name: Unit tests (non-blocking)
+      - name: Unit tests
         env:
           PYTHONPATH: .
-        run: pytest -q --junitxml=reports/junit.xml || true
+        run: pytest -q --junitxml=reports/junit.xml
 
       - name: Generate FASTQ
         run: python scripts/generate_fastq.py tests/resources/small.fastq --reads 10000 --seed 42 --length 100
@@ -53,32 +53,36 @@ jobs:
 
       - name: STAT validation + Manifest
         run: |
+          test -f 01_Benchmark_Package/Results/benchmark_results.csv
           python - <<'PY'
           import csv
           from pathlib import Path
+
           results = Path("01_Benchmark_Package/Results/benchmark_results.csv")
           if not results.exists():
-              print("No results CSV — skipping STAT")
-              raise SystemExit(0)
+              raise FileNotFoundError("Missing benchmark_results.csv")
+
           base, cand = [], []
-          with open(results) as f:
+          with results.open() as f:
               for row in csv.DictReader(f):
-                  (base if row.get("run_id","").startswith("baseline") else cand).append(row)
+                  if row.get("run_id", "").startswith("baseline"):
+                      base.append(row)
+                  else:
+                      cand.append(row)
+
           out = Path("01_Benchmark_Package/Results")
-          (out / "baseline.csv").write_text("throughput_units_per_sec\n" + "\n".join(r.get("throughput_units_per_sec","") for r in base) + "\n")
-          (out / "candidate.csv").write_text("throughput_units_per_sec\n" + "\n".join(r.get("throughput_units_per_sec","") for r in cand) + "\n")
+          if not base or not cand:
+              raise ValueError("Benchmark result split is empty; missing baseline or candidate data")
+
+          (out / "baseline.csv").write_text(
+              "throughput_units_per_sec\n" + "\n".join(r.get("throughput_units_per_sec", "") for r in base) + "\n"
+          )
+          (out / "candidate.csv").write_text(
+              "throughput_units_per_sec\n" + "\n".join(r.get("throughput_units_per_sec", "") for r in cand) + "\n"
+          )
           PY
-          if [ -f 01_Benchmark_Package/Results/baseline.csv ]; then
-            python tests/validate_stats.py --baseline 01_Benchmark_Package/Results/baseline.csv --candidate 01_Benchmark_Package/Results/candidate.csv || true
-          fi
-          python -c "
-          from pathlib import Path
-          try:
-              from src.utils.hash_manifest import write_manifest
-              write_manifest(Path('.'), Path('01_Benchmark_Package/Results/repo_manifest.txt'))
-          except Exception as e:
-              print('Manifest skipped:', e)
-          "
+          python tests/validate_stats.py --baseline 01_Benchmark_Package/Results/baseline.csv --candidate 01_Benchmark_Package/Results/candidate.csv
+          python -c "from pathlib import Path; from src.utils.hash_manifest import write_manifest; write_manifest(Path('.'), Path('01_Benchmark_Package/Results/repo_manifest.txt'))"
 
       - name: Upload PoC artifacts
         if: always()

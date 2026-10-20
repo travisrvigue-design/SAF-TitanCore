@@ -20,22 +20,22 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          [ -f ci/benchmark-requirements.txt ] && pip install -r ci/benchmark-requirements.txt || true
+          if [ -f ci/benchmark-requirements.txt ]; then
+            pip install -r ci/benchmark-requirements.txt
+          fi
 
       - name: Prepare data
         run: |
           mkdir -p tests/resources benchmark-results
-          [ -f tests/resources/small.fastq ] || python scripts/generate_fastq.py tests/resources/small.fastq --reads 500 --seed 99
+          if [ ! -f tests/resources/small.fastq ]; then
+            python scripts/generate_fastq.py tests/resources/small.fastq --reads 500 --seed 99
+          fi
 
       - name: Run benchmarks
         run: |
-          if [ -f ci/benchmark_harness.py ]; then
-            python ci/benchmark_harness.py tests/resources/small.fastq \
-              --out benchmark-results --runs 10 --workers 4 --chunk 100
-          else
-            python -m timeit -n 20 -s "from scripts import partitioner" \
-              "partitioner.partition_fastq('tests/resources/small.fastq','/tmp/units',chunk_lines=100)"
-          fi
+          test -f ci/benchmark_harness.py
+          python ci/benchmark_harness.py tests/resources/small.fastq \
+            --out benchmark-results --runs 10 --workers 4 --chunk 100
 
       - name: Upload results
         if: always()

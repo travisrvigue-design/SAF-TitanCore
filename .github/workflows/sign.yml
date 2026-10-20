@@ -11,20 +11,23 @@ name: Sign Release Artifact
 # Gate rules:
 # - smoke.yml must pass first
 # - ci.yml must pass second
-# - sign.yml may run after those gates succeed
+# - sign.yml runs only after those gates succeed
 # - release must not proceed without a valid signed artifact
 
 on:
   workflow_dispatch:
-  push:
-    tags:
-      - 'v*'
+  workflow_run:
+    workflows:
+      - "Smoke Test"
+      - "CI - Build, Test, Verify"
+    types: [completed]
 
 permissions:
   contents: read
 
 jobs:
   sign:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -33,10 +36,15 @@ jobs:
       - name: Install cosign
         uses: sigstore/cosign-installer@v3.8.0
 
-      - name: Build artifact to sign
+      - name: Build release artifact
         run: |
           mkdir -p dist
-          echo "release-artifact" > dist/release.txt
+          tar -czf dist/saf-release.tar.gz README.md .github scripts src tests requirements.txt
+          sha256sum dist/saf-release.tar.gz > dist/saf-release.tar.gz.sha256
+
+      - name: Verify artifact integrity
+        run: |
+          sha256sum -c dist/saf-release.tar.gz.sha256
 
       - name: Sign artifact with cosign
         env:
@@ -47,6 +55,24 @@ jobs:
             echo "Missing required secret: COSIGN_PRIVATE_KEY" >&2
             exit 1
           fi
+
           echo "$COSIGN_PRIVATE_KEY" > cosign.key
           chmod 600 cosign.key
-          cosign sign --yes --key cosign.key --tlog-upload=false dist/release.txt
+
+          cosign sign --yes --key cosign.key --tlog-upload=false \
+            --output-signature dist/saf-release.tar.gz.sig \
+            dist/saf-release.tar.gz
+
+      - name: Verify artifact signature
+        env:
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+        run: |
+          if [ -z "${COSIGN_PRIVATE_KEY:-}" ]; then
+            echo "Missing required secret: COSIGN_PRIVATE_KEY" >&2
+            exit 1
+          fi
+
+          echo "$COSIGN_PRIVATE_KEY" > cosign.key
+          chmod 600 cosign.key
+
+          cosign verify-blob --key cosign.key --signature dist/saf-release.tar.gz.sig dist/saf-release.tar.gz
