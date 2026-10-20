@@ -1,27 +1,52 @@
-name: Signing (disabled until signer is configured)
+name: Sign Release Artifact
 
-# This workflow is intentionally disabled because the repository does not currently
-# have a valid cosign signer configured. Without a valid signer or GitHub OIDC
-# trust configuration, a real signature cannot be created.
+# This workflow is enabled only when a valid cosign signer is configured in the
+# repository secrets. It produces a real signature for the build artifact and does
+# not claim signing unless the signer is present.
 #
-# Required gate rules:
+# Repository secrets required:
+# - COSIGN_PRIVATE_KEY  (required)
+# - COSIGN_PASSWORD     (optional, only if the key is password-protected)
+#
+# Gate rules:
 # - smoke.yml must pass first
 # - ci.yml must pass second
-# - sign.yml may run only after a valid signer exists
+# - sign.yml may run after those gates succeed
 # - release must not proceed without a valid signed artifact
 
 on:
   workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
 
 permissions:
   contents: read
 
 jobs:
   sign:
-    if: ${{ false }}
     runs-on: ubuntu-latest
     steps:
-      - name: No signer configured
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@v3.8.0
+
+      - name: Build artifact to sign
         run: |
-          echo "Signing is disabled because no valid cosign signer is configured for this repository."
-          echo "Configure GitHub OIDC signing or a valid COSIGN private key before enabling this workflow."
+          mkdir -p dist
+          echo "release-artifact" > dist/release.txt
+
+      - name: Sign artifact with cosign
+        env:
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+        run: |
+          if [ -z "${COSIGN_PRIVATE_KEY:-}" ]; then
+            echo "Missing required secret: COSIGN_PRIVATE_KEY" >&2
+            exit 1
+          fi
+          echo "$COSIGN_PRIVATE_KEY" > cosign.key
+          chmod 600 cosign.key
+          cosign sign --yes --key cosign.key --tlog-upload=false dist/release.txt
