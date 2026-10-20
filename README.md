@@ -1,5 +1,28 @@
-# README: Project TitanCore (Lotusv1) - Verification & Validation
+.github/workflows/policy-check.yml
+name: Policy Check
 
-This repository contains the Sovereign Adaptive Framework (SAF) core components and verification artifacts.
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - "**"
+  workflow_dispatch:
 
-See docs/ for architecture, governance, security, and stats plans. Run `pytest` inside the repository or build the docker image using `docker build --no-cache -t saf-titancore:local .` to perform a clean-room build.
+jobs:
+  workflow-policy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Enforce fail-closed workflow policy
+        run: |
+          python scripts/ci/workflow_policy_check.py
