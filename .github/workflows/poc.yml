@@ -1,5 +1,8 @@
 name: SAF PoC and Stats
 
+permissions:
+  contents: read
+
 on:
   workflow_dispatch:
   push:
