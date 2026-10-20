@@ -1,27 +1,46 @@
-name: Benchmarks (manual)
+name: Benchmarks
 
 on:
   workflow_dispatch:
 
 jobs:
   benchmarks:
-    runs-on: self-hosted
-    if: runner.labels contains 'saf-benchmark'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v4
+
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install benchmark deps
-        run: pip install -r ci/benchmark-requirements.txt
-      - name: Run benchmark harness
+          cache: 'pip'
+
+      - name: Install
         run: |
-          echo "Running benchmarks on self-hosted runner"
-          # Placeholder for real benchmark command
-          python -m timeit -n 10 -s "from scripts import partitioner" "partitioner.partition_fastq('tests/resources/small.fastq','/tmp/units', chunk_lines=100)"
-      - name: Upload benchmark artifact
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          [ -f ci/benchmark-requirements.txt ] && pip install -r ci/benchmark-requirements.txt || true
+
+      - name: Prepare data
+        run: |
+          mkdir -p tests/resources benchmark-results
+          [ -f tests/resources/small.fastq ] || python scripts/generate_fastq.py tests/resources/small.fastq --reads 500 --seed 99
+
+      - name: Run benchmarks
+        run: |
+          if [ -f ci/benchmark_harness.py ]; then
+            python ci/benchmark_harness.py tests/resources/small.fastq \
+              --out benchmark-results --runs 10 --workers 4 --chunk 100
+          else
+            python -m timeit -n 20 -s "from scripts import partitioner" \
+              "partitioner.partition_fastq('tests/resources/small.fastq','/tmp/units',chunk_lines=100)"
+          fi
+
+      - name: Upload results
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: benchmark-results
-          path: /tmp/benchmark-results || ./benchmark-results
+          path: benchmark-results/
+          retention-days: 14
